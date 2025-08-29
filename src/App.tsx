@@ -8,6 +8,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import EnergyReports from "./pages/EnergyReports";
+import Faults from "./pages/Faults";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +29,21 @@ const App = () => (
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/energy-reports" element={
+                <ProtectedRoute>
+                  <EnergyReports />
+                </ProtectedRoute>
+              } />
+              <Route path="/faults" element={
+                <ProtectedRoute>
+                  <Faults />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
