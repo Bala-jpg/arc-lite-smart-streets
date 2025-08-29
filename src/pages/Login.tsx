@@ -62,13 +62,23 @@ const Login = () => {
 
   const handleGoogleAuth = async () => {
     try {
-      await signInWithGoogle();
+      setLoading(true);
+      const { error } = await signInWithGoogle();
+      if (error) {
+        toast({
+          title: "Google Sign-In Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
     } catch (error: any) {
       toast({
-        title: "Google Sign-In Error",
+        title: "Google Sign-In Error", 
         description: error.message,
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 

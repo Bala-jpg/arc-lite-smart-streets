@@ -30,7 +30,7 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Energy Reports", href: "/energy-reports", icon: Zap },
     { name: "Faults", href: "/faults", icon: AlertTriangle },
     { name: "Settings", href: "/settings", icon: Settings },
@@ -72,37 +72,42 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-          </div>
-
-          {/* Theme toggle and Profile dropdown */}
-          <div className="hidden md:flex md:items-center md:space-x-2">
+          {/* Right side - Theme toggle and Profile dropdown */}
+          <div className="flex items-center space-x-2">
+            {/* Theme toggle for all screen sizes */}
             <ThemeToggle />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <User className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem>
-                  <User className="w-4 h-4 mr-2" />
-                  Account Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            
+            {/* Profile dropdown - desktop */}
+            <div className="hidden md:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem>
+                    <User className="w-4 h-4 mr-2" />
+                    Account Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -126,6 +131,32 @@ const Navigation = () => {
                 {item.name}
               </NavLink>
             ))}
+            
+            {/* Mobile user actions */}
+            <div className="pt-2 border-t border-border">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  // Add account settings logic here
+                }}
+              >
+                <User className="w-4 h-4 mr-2" />
+                Account Settings
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleLogout();
+                }}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         )}
       </div>
