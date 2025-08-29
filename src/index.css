@@ -18,8 +18,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 9%;
 
-    --primary: 180 100% 85%; /* Pale Turquoise #afeeee */
-    --primary-foreground: 0 0% 9%;
+    --primary: 181 100% 27%; /* Dark Cyan #008b8b */
+    --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 9%;
@@ -27,18 +27,18 @@ All colors MUST be HSL.
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 180 100% 85%; /* Pale Turquoise #afeeee */
-    --accent-foreground: 0 0% 9%;
+    --accent: 181 100% 27%; /* Dark Cyan #008b8b */
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 180 100% 85%;
+    --ring: 181 100% 27%;
 
     /* ARC-LITE Design Tokens */
-    --electric-blue: 180 100% 85%; /* Pale Turquoise */
+    --electric-blue: 181 100% 27%; /* Dark Cyan */
     --energy-green: 142 76% 36%;
     --warning-amber: 48 96% 53%;
     --danger-red: 0 72% 51%;
@@ -56,12 +56,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 180 100% 85%;
-    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-primary: 181 100% 27%;
+    --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 96%;
     --sidebar-accent-foreground: 0 0% 9%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 180 100% 85%;
+    --sidebar-ring: 181 100% 27%;
   }
 
   .dark {
