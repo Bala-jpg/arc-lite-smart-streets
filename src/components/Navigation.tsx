@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Zap, 
@@ -9,6 +9,8 @@ import {
   LogOut,
   Menu
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +21,13 @@ import {
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { signOut, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const navItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -74,8 +83,9 @@ const Navigation = () => {
             </Button>
           </div>
 
-          {/* Profile dropdown */}
-          <div className="hidden md:flex md:items-center">
+          {/* Theme toggle and Profile dropdown */}
+          <div className="hidden md:flex md:items-center md:space-x-2">
+            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
@@ -87,7 +97,7 @@ const Navigation = () => {
                   <User className="w-4 h-4 mr-2" />
                   Account Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </DropdownMenuItem>
