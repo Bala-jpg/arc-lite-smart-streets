@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { securityLogger, sanitizeInput } from "@/lib/security";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,18 +29,69 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Rate limiting check
+    if (!sanitizeInput.checkRateLimit('email_auth', 5, 300000)) {
+      toast({
+        title: "Too Many Attempts",
+        description: "Please wait 5 minutes before trying again.",
+        variant: "destructive"
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeInput.email(email);
+    const sanitizedPassword = sanitizeInput.password(password);
+
+    // Log authentication attempt
+    securityLogger.logEvent({
+      type: 'AUTH_ATTEMPT',
+      email: sanitizedEmail,
+      provider: 'email'
+    });
+
     try {
+      // Additional password validation for sign up
+      if (isSignUp) {
+        const passwordValidation = sanitizeInput.validatePasswordStrength(sanitizedPassword);
+        if (!passwordValidation.isValid) {
+          toast({
+            title: "Password Requirements",
+            description: passwordValidation.errors[0],
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
       const { error } = isSignUp 
-        ? await signUpWithEmail(email, password)
-        : await signInWithEmail(email, password);
+        ? await signUpWithEmail(sanitizedEmail, sanitizedPassword)
+        : await signInWithEmail(sanitizedEmail, sanitizedPassword);
 
       if (error) {
+        // Log authentication failure
+        securityLogger.logEvent({
+          type: 'AUTH_FAILURE',
+          email: sanitizedEmail,
+          provider: 'email',
+          errorMessage: error.message
+        });
+
         toast({
           title: "Authentication Error",
           description: error.message,
           variant: "destructive"
         });
       } else {
+        // Log successful authentication
+        securityLogger.logEvent({
+          type: 'AUTH_SUCCESS',
+          email: sanitizedEmail,
+          provider: 'email'
+        });
+
         if (isSignUp) {
           toast({
             title: "Check your email",
@@ -50,6 +102,14 @@ const Login = () => {
         }
       }
     } catch (error: any) {
+      // Log authentication failure
+      securityLogger.logEvent({
+        type: 'AUTH_FAILURE',
+        email: sanitizedEmail,
+        provider: 'email',
+        errorMessage: error.message
+      });
+
       toast({
         title: "Error",
         description: error.message,
@@ -63,15 +123,42 @@ const Login = () => {
   const handleGoogleAuth = async () => {
     try {
       setLoading(true);
+      
+      // Log authentication attempt
+      securityLogger.logEvent({
+        type: 'AUTH_ATTEMPT',
+        provider: 'google'
+      });
+
       const { error } = await signInWithGoogle();
       if (error) {
+        // Log authentication failure
+        securityLogger.logEvent({
+          type: 'AUTH_FAILURE',
+          provider: 'google',
+          errorMessage: error.message
+        });
+
         toast({
           title: "Google Sign-In Error",
           description: error.message,
           variant: "destructive"
         });
+      } else {
+        // Log successful authentication
+        securityLogger.logEvent({
+          type: 'AUTH_SUCCESS',
+          provider: 'google'
+        });
       }
     } catch (error: any) {
+      // Log authentication failure
+      securityLogger.logEvent({
+        type: 'AUTH_FAILURE',
+        provider: 'google',
+        errorMessage: error.message
+      });
+
       toast({
         title: "Google Sign-In Error", 
         description: error.message,
