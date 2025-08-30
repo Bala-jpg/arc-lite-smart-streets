@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      energy_reports: {
+        Row: {
+          created_at: string
+          energy_consumed_kwh: number
+          energy_saved_kwh: number
+          id: string
+          report_date: string
+          street_light_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          energy_consumed_kwh: number
+          energy_saved_kwh: number
+          id?: string
+          report_date: string
+          street_light_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          energy_consumed_kwh?: number
+          energy_saved_kwh?: number
+          id?: string
+          report_date?: string
+          street_light_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -36,6 +66,36 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
           updated_at?: string
           user_id?: string
         }

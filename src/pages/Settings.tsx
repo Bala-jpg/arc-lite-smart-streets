@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Settings as SettingsIcon, User, Bell, Shield, Palette } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,74 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useUserRegistration } from "@/hooks/useUserRegistration";
+import { useAuth } from "@/hooks/useAuth";
 
 const Settings = () => {
+  const { user } = useAuth();
+  const { isRegistered, loading, userData, registerUser } = useUserRegistration();
+  const [formData, setFormData] = useState({
+    firstName: userData?.first_name || "",
+    lastName: userData?.last_name || "",
+    email: userData?.email || ""
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = () => {
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()) {
+      return { isValid: false, message: "All fields are required" };
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return { isValid: false, message: "Please enter a valid email address" };
+    }
+    
+    return { isValid: true, message: "" };
+  };
+
+  const handleSubmit = async () => {
+    const validation = validateForm();
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+
+    setSubmitting(true);
+    
+    const success = await registerUser({
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      email: formData.email
+    });
+
+    if (success) {
+      // Update form data to reflect registered data
+      setFormData({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email
+      });
+    }
+    
+    setSubmitting(false);
+  };
+
+  // Update form when userData changes
+  useState(() => {
+    if (userData) {
+      setFormData({
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        email: userData.email
+      });
+    }
+  });
+
   return (
     <div className="min-h-screen bg-gradient-bg">
       <Navigation />
@@ -25,30 +92,69 @@ const Settings = () => {
         </div>
 
         <div className="space-y-8">
-          {/* Account Settings */}
+          {/* User Registration */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                Account Settings
+                User Registration
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="Enter your first name" />
+              {!user ? (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground">Please log in to register your details</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Enter your last name" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
-              </div>
-              <Button>Save Changes</Button>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input 
+                        id="firstName" 
+                        placeholder="Enter your first name"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        disabled={loading || isRegistered}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input 
+                        id="lastName" 
+                        placeholder="Enter your last name"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        disabled={loading || isRegistered}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      disabled={loading || isRegistered}
+                    />
+                  </div>
+                  {!isRegistered && (
+                    <Button 
+                      onClick={handleSubmit}
+                      disabled={submitting || loading}
+                    >
+                      {submitting ? "Saving..." : "Submit"}
+                    </Button>
+                  )}
+                  {isRegistered && (
+                    <div className="text-center py-2">
+                      <p className="text-sm text-green-600">✓ Registration completed successfully!</p>
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 
